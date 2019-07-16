@@ -18,7 +18,7 @@ public:
   void initialize(double, double);
   void evaluate(int);
   Agent getBest();
-  Population createNewPopulation(Agent &, double, double, double);
+  Population createNewPopulationSCA(Agent &, double, double, double);
   Population createNewPopulationDE(double, double);
   Population updatePopulation(Population &);
   void printPopulation();
@@ -53,7 +53,6 @@ void Population::evaluate(int func)
       f3(agents[i]);
       break;
     default:
-      f1(agents[i]);
       break;
     }
   }
@@ -75,7 +74,7 @@ Agent Population::getBest()
   return agents[idx];
 }
 
-Population Population::createNewPopulation(Agent &a, double lower_bound, double upper_bound, double r1)
+Population Population::createNewPopulationSCA(Agent &a, double lower_bound, double upper_bound, double r1)
 {
   std::vector<double> temp_x;
   for (size_t i = 0; i < a.x.size(); i++)
@@ -90,15 +89,15 @@ Population Population::createNewPopulation(Agent &a, double lower_bound, double 
   Population new_population = Population(temp_vector);
   for (size_t i = 0; i < agents.size(); i++)
   {
-    double r4 = generateRandomdouble(0, 1);
-    double t1 = generateRandomdouble(0, 1);
-    double t2 = generateRandomdouble(0, 1);
-    double r2 = 2 * M_PI * t1;
-    double r3 = 2 * t2;
     std::vector<double> x;
     double temp;
     for (size_t j = 0; j < agents[i].x.size(); j++)
     {
+      double r4 = generateRandomdouble(0, 1);
+      double t1 = generateRandomdouble(0, 1);
+      double t2 = generateRandomdouble(0, 1);
+      double r2 = 2 * M_PI * t1;
+      double r3 = 2 * t2;
       if (r4 < 0.5)
         temp = agents[i].x[j] + r1 * sin(r2) * abs(r3 * a.x[j] - agents[i].x[j]);
       else
@@ -129,18 +128,18 @@ Population Population::createNewPopulationDE(double lower_bound, double upper_bo
   double temp;
   for (size_t i = 0; i < agents.size(); i++)
   {
+    int a = generateRandomInt(0, agents.size() - 1);
+    int b = generateRandomInt(0, agents.size() - 1);
+    int c = generateRandomInt(0, agents.size() - 1);
+    while (a == b || a == c || a == i || b == c || b == i || c == i)
+    {
+      a = generateRandomInt(0, agents.size() - 1);
+      b = generateRandomInt(0, agents.size() - 1);
+      c = generateRandomInt(0, agents.size() - 1);
+    }
     std::vector<double> x;
     for (size_t j = 0; j < agents[i].x.size(); j++)
     {
-      int a = generateRandomInt(0, agents.size() - 1);
-      int b = generateRandomInt(0, agents.size() - 1);
-      int c = generateRandomInt(0, agents.size() - 1);
-      while (a == b || a == c || a == i || b == c || b == i || c == i)
-      {
-        a = generateRandomInt(0, agents.size() - 1);
-        b = generateRandomInt(0, agents.size() - 1);
-        c = generateRandomInt(0, agents.size() - 1);
-      }
       double CR = 1;
       double F = 0.5;
       double r = generateRandomdouble(0, 1.000001);
